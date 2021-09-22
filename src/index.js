@@ -20,6 +20,18 @@ function verifyIfExistsAccount(req, res, next) {
   return next();
 }
 
+function getBalance(statment) {
+  const balance = statment.reduce((accumulator, operation) => {
+    if (operation.type === "credit") {
+      return accumulator + operation.amount;
+    } else {
+      return accumulator - operation.amount;
+    }
+  }, 0);
+
+  return balance;
+}
+
 /**
  * cpf: string,
  * name: string,
@@ -71,7 +83,32 @@ app.post("/deposit", verifyIfExistsAccount, (req, res) => {
 
   user.statment.push(statmentOperation);
 
-  return res.status(201).send();
+  return res.status(201).json(user.statment);
 });
 
+app.post("/withdraw", verifyIfExistsAccount, (req, res) => {
+  const { amount } = req.body;
+  const { user } = req;
+
+  const total = getBalance(user.statment);
+
+
+  if (amount > total) {
+    return res.status(400).json({ error: "Insufient credit" });
+  }
+
+  const statmentOperation = {
+    amount,
+    created_at: new Date(),
+    type: "debit"
+  };
+
+  user.statment.push(statmentOperation);
+
+  return res.status(201).json({
+    last_debit: statmentOperation,
+    last_credit: total,
+    credit: getBalance(user.statment)
+  });
+});
 app.listen(3333);
