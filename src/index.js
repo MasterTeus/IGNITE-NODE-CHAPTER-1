@@ -15,7 +15,7 @@ function verifyIfExistsAccount(req, res, next) {
     return res.status(401).json({ error: "User not exists" });
   }
 
-  res.userExists = userExists;
+  req.user = userExists;
 
   return next();
 }
@@ -49,11 +49,29 @@ app.post("/account", (req, res) => {
   return res.status(201).json(users);
 });
 
-//TODO: Deve ser possível buscar o extrato bancário do clie nte
+//TODO: Deve ser possível buscar o extrato bancário do cliente
 app.get("/statment", verifyIfExistsAccount, (req, res) => {
-  const { userExists } = res;
+  const { user } = req;
 
-  return res.status(201).json({ statment: userExists.statment });
+  return res.status(201).json(user.statment);
+});
+
+//TODO: Deve ser possível realizar um depósito
+app.post("/deposit", verifyIfExistsAccount, (req, res) => {
+  const { description, amount } = req.body;
+
+  const { user } = req;
+
+  const statmentOperation = {
+    description,
+    amount,
+    created_at: new Date(),
+    type: "credit"
+  };
+
+  user.statment.push(statmentOperation);
+
+  return res.status(201).send();
 });
 
 app.listen(3333);
