@@ -15,7 +15,7 @@ function verifyIfExistsAccount(req, res, next) {
     return res.status(401).json({ error: "User not exists" });
   }
 
-  req.userExists = userExists;
+  res.userExists = userExists;
 
   return next();
 }
@@ -51,7 +51,7 @@ app.post("/account", (req, res) => {
 
 //TODO: Deve ser possível buscar o extrato bancário do clie nte
 app.get("/statment", verifyIfExistsAccount, (req, res) => {
-  const { userExists } = req;
+  const { userExists } = res;
 
   return res.status(201).json({ statment: userExists.statment });
 });
