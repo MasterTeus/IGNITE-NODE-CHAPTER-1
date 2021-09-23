@@ -136,10 +136,19 @@ app.put("/account", verifyIfExistsAccount, (req, res) => {
   return res.status(201).send();
 });
 
+//TODO: Deve ser possível obter dados da conta do cliente
 app.get("/account", verifyIfExistsAccount, (req, res) => {
   const { user } = req;
 
   return res.status(200).json(user);
+});
+
+app.delete("/account", verifyIfExistsAccount, (req, res) => {
+  const { user } = req;
+
+  users.splice(user, 1);
+
+  return res.status(201).send(users);
 });
 
 app.listen(3333);
