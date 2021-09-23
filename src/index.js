@@ -126,4 +126,14 @@ app.post("/withdraw", verifyIfExistsAccount, (req, res) => {
   });
 });
 
+//TODO: Deve ser possível atualizar dados da conta do cliente
+app.put("/account", verifyIfExistsAccount, (req, res) => {
+  const { name } = req.body;
+  const { user } = req;
+
+  user.name = name;
+
+  return res.status(201).send();
+});
+
 app.listen(3333);
