@@ -136,4 +136,10 @@ app.put("/account", verifyIfExistsAccount, (req, res) => {
   return res.status(201).send();
 });
 
+app.get("/account", verifyIfExistsAccount, (req, res) => {
+  const { user } = req;
+
+  return res.status(200).json(user);
+});
+
 app.listen(3333);
