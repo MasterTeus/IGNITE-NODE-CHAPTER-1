@@ -68,6 +68,21 @@ app.get("/statment", verifyIfExistsAccount, (req, res) => {
   return res.status(201).json(user.statment);
 });
 
+//TODO: Deve ser possível buscar o extrato bancário do cliente por data
+app.get("/statment/date", verifyIfExistsAccount, (req, res) => {
+  const { user } = req;
+  const { date } = req.query;
+
+  const dateFormat = new Date(date + " 00:00");
+
+  const filterStatmentDate = user.statment.filter(
+    (statment) =>
+      statment.created_at.toDateString() === new Date(dateFormat).toDateString()
+  );
+
+  return res.status(201).json(filterStatmentDate);
+});
+
 //TODO: Deve ser possível realizar um depósito
 app.post("/deposit", verifyIfExistsAccount, (req, res) => {
   const { description, amount } = req.body;
@@ -92,7 +107,6 @@ app.post("/withdraw", verifyIfExistsAccount, (req, res) => {
 
   const total = getBalance(user.statment);
 
-
   if (amount > total) {
     return res.status(400).json({ error: "Insufient credit" });
   }
@@ -111,4 +125,5 @@ app.post("/withdraw", verifyIfExistsAccount, (req, res) => {
     credit: getBalance(user.statment)
   });
 });
+
 app.listen(3333);
