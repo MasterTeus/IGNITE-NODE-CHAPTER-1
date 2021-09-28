@@ -142,7 +142,7 @@ app.get("/account", verifyIfExistsAccount, (req, res) => {
 
   return res.status(200).json(user);
 });
-
+//TODO: Deve ser possível deletar uma conta
 app.delete("/account", verifyIfExistsAccount, (req, res) => {
   const { user } = req;
 
